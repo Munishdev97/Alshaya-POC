@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset
+  namespace: alshaya
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-container
+          image: alshayaacr.azurecr.io/sample/nginx:v1
+          ports:
+            - containerPort: 80
+          volumeMounts:
+          - mountPath: /opt/volume
+            name: data-volume
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: sample-pvc
+      tolerations:
+      - effect: "NoExecute"
+        key: app
+        operator: Equal
+        value: frontend
